@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sorting</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #2c2597;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .output-container {
+            margin: 20px auto;
+            padding: 10px;
+            width: 95%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>File Organizer</h1>
+    <input type="file" id="fileInput" accept=".csv">
+    <button onclick="showfile()">Show File</button>
+    <br>
+    <div id="output" class="output-container"></div>
+    <br>
+    <button onclick="sortByStudentDecision()">Student Decision</button>
+    <br>
+    <div id="studentDecisionOutput" class="output-container"></div>
+    <br>
+    <button onclick="sortByCommitteeDecision()">Sort by Committee Decision</button>
+    <br>
+    <div id= "committeeDecisionOutput" class="output-container"></div>
+    <br>
+    <button onclick="sortByApplicationStatus()">Sort by Application Status</button>
+    <br>
+    <div id= "applicationStatusOutput" class="output-container"></div>
+    <br>
+    <!--button onclick="printUnsortedInfo()">Print Unsorted Info</button-->
+
+    <script>
+function showfile() 
+{
+    var fileInput = document.getElementById('fileInput');
+    if (fileInput.files.length > 0) {
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var fileContent = event.target.result;
+            var lines = fileContent.split('\n'); // Split lines
+            var headers = lines[0].split(','); // Get headers
+            var lastNameIndex = headers.indexOf('Last Name'); // Find the index of the Last Name column
+
+            // Check if the header exists
+            if (lastNameIndex !== -1) {
+                // Sort based on Last Name column
+                var sortedLines = lines.slice(1).sort(function(a, b) {
+                    var lastNameA = a.split(',')[lastNameIndex]; // Get the Last Name value for line A
+                    var lastNameB = b.split(',')[lastNameIndex]; // Get the Last Name value for line B
+                    return lastNameA; // Compare the last names
+                });
+
+                // Create HTML table for sorted data
+                var tableHTML = '<table>';
+                tableHTML += '<tr>'; // Add header row
+                headers.forEach(function(header) {
+                    tableHTML += '<th>' + header.trim() + '</th>'; // Add each header cell
+                });
+                tableHTML += '</tr>';
+                // Add rows for sorted data
+                sortedLines.forEach(function(line) {
+                    tableHTML += '<tr>';
+                    var cells = line.split(',');
+                    cells.forEach(function(cell) {
+                        tableHTML += '<td style="padding: 5px; border: 1px solid #ccc;">' + cell.trim() + '</td>'; // Add each cell
+                    });
+                    tableHTML += '</tr>';
+                });
+                tableHTML += '</table>';
+                document.getElementById('output').innerHTML = tableHTML; // Display sorted data
+            } else {
+                alert('Last Name column not found.');
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a file.');
+    }
+
+
+}
+
+    function sortByStudentDecision() 
+    {
+    var fileInput = document.getElementById('fileInput');
+    var file = fileInput.files[0];
+    if (file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var fileContent = event.target.result;
+            var lines = fileContent.split('\n'); // Split lines
+            var headers = lines[0].split(','); // Get headers
+            var studentDecisionIndex = headers.indexOf('Student Decision'); // Find the index of the Student Decision column
+
+            // Check if the header exists
+            if (studentDecisionIndex !== -1) {
+                // Sort based on Student Decision column
+                var sortedLines = lines.slice(1).sort(function(a, b) {
+                    var decisionA = a.split(',')[studentDecisionIndex].trim(); // Get the Student Decision value for line A
+                    var decisionB = b.split(',')[studentDecisionIndex].trim(); // Get the Student Decision value for line B
+                    return decisionA.localeCompare(decisionB); // Compare the decisions
+                });
+
+                // Create HTML table for sorted data
+                var tableHTML = '<table>';
+                tableHTML += '<tr>'; // Add header row
+                headers.forEach(function(header) {
+                    tableHTML += '<th>' + header.trim() + '</th>'; // Add each header cell
+                });
+                tableHTML += '</tr>';
+                // Add rows for sorted data
+                sortedLines.forEach(function(line) {
+                    tableHTML += '<tr>';
+                    var cells = line.split(',');
+                    cells.forEach(function(cell) {
+                        tableHTML += '<td style="padding: 5px; border: 1px solid #ccc;">' + cell.trim() + '</td>'; // Add each cell
+                    });
+                    tableHTML += '</tr>';
+                });
+                tableHTML += '</table>';
+                document.getElementById('studentDecisionOutput').innerHTML = tableHTML; // Display sorted data
+            } else {
+                alert('Student Decision column not found.');
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a file.');
+    }
+        }
+    function sortByCommitteeDecision()
+    {
+        var fileInput = document.getElementById('fileInput');
+if (fileInput.files.length > 0) {
+    var file = fileInput.files[0];
+    var formData = new FormData();
+    formData.append('file', file);
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var fileContent = event.target.result;
+        var lines = fileContent.split('\n'); // Split lines
+        var headers = lines[0].split(','); // Get headers
+        console.log("Headers:", headers); // Log the headers to check if the column name is correct
+        var decisionIndex = headers.indexOf('Committe Decision'); // Find the index of the Committee Decision column
+
+        // Check if the header exists
+        if (decisionIndex !== -1) {
+            // Sort based on Committee Decision column
+            var sortedLines = lines.slice(1).sort(function(a, b) {
+    var cellsA = a.split(',');
+    var cellsB = b.split(',');
+
+    // Check if both lines have enough columns
+    if (cellsA.length > decisionIndex && cellsB.length > decisionIndex) {
+        // Get the decision values and trim whitespace
+        var decisionA = cellsA[decisionIndex].trim() || ''; // Use empty string if undefined
+        var decisionB = cellsB[decisionIndex].trim() || ''; // Use empty string if undefined
+
+        // Map decision values to sort order
+        var sortOrder = {
+            'Approved': 0,
+            'Pending': 1,
+            'Declined': 2
+        };
+
+        // Compare the decisions using the sort order
+        return sortOrder[decisionA] - sortOrder[decisionB];
+    } else {
+        // If one of the lines doesn't have enough columns, consider it greater
+        return 1;
+    }
+            });
+
+            // Create HTML table for sorted data
+            var tableHTML = '<table>';
+            tableHTML += '<tr>'; // Add header row
+            headers.forEach(function(header) {
+                tableHTML += '<th>' + header.trim() + '</th>'; // Add each header cell
+            });
+            tableHTML += '</tr>';
+            // Add rows for sorted data
+            sortedLines.forEach(function(line) {
+                tableHTML += '<tr>';
+                var cells = line.split(',');
+                cells.forEach(function(cell) {
+                    tableHTML += '<td style="padding: 5px; border: 1px solid #ccc;">' + cell.trim() + '</td>'; // Add each cell
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</table>';
+            document.getElementById('committeeDecisionOutput').innerHTML = tableHTML; // Display sorted data
+        } else {
+            alert('Committee Decision column not found.');
+        }
+    };
+    reader.readAsText(file);
+} else {
+    alert('Please select a file.');
+}
+
+    }
+    function sortByApplicationStatus() 
+    {
+        var fileInput = document.getElementById('fileInput');
+    if (fileInput.files.length > 0) {
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var fileContent = event.target.result;
+            var lines = fileContent.split('\n'); // Split lines
+            var headers = lines[0].split(','); // Get headers
+            var statusIndex = headers.indexOf('Application Status'); // Find the index of the Application Status column
+
+            // Check if the header exists
+            if (statusIndex !== -1) {
+                // Sort based on Application Status column
+                var sortedLines = lines.slice(1).sort(function(a, b) {
+                    var statusA = a.split(',')[statusIndex];
+                    console.log('statusA:', statusA);
+                    statusA = statusA ? statusA.trim() : ''; // Get the Application Status value for line A
+                    var statusB = b.split(',')[statusIndex].trim(); // Get the Application Status value for line B
+                    return statusA.localeCompare(statusB); // Compare the statuses
+                });
+
+                // Create HTML table for sorted data
+                var tableHTML = '<table>';
+                tableHTML += '<tr>'; // Add header row
+                headers.forEach(function(header) {
+                    tableHTML += '<th>' + header.trim() + '</th>'; // Add each header cell
+                });
+                tableHTML += '</tr>';
+                // Add rows for sorted data
+                sortedLines.forEach(function(line) {
+                    tableHTML += '<tr>';
+                    var cells = line.split(',');
+                    cells.forEach(function(cell) {
+                        tableHTML += '<td style="padding: 5px; border: 1px solid #ccc;">' + cell.trim() + '</td>'; // Add each cell
+                    });
+                    tableHTML += '</tr>';
+                });
+                tableHTML += '</table>';
+                document.getElementById('applicationStatusOutput').innerHTML = tableHTML; // Display sorted data
+            } else {
+                alert('Application Status column not found.');
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a file.');
+   
+}
+}
+
+    
+    </script>
+</body>
+</html>
